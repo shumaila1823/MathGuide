@@ -1,0 +1,4305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>MathGuide Pro | Interactive Mathematics</title>
+
+<style>
+
+/* =========================================================
+   MATHGUIDE PRO
+   Complete single-file mathematics learning application
+========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary: #6366f1;
+    --primary-dark: #4f46e5;
+    --secondary: #8b5cf6;
+    --success: #16a34a;
+    --danger: #dc2626;
+    --warning: #f59e0b;
+
+    --bg: #f5f7fb;
+    --card: #ffffff;
+    --text: #172033;
+    --muted: #697386;
+    --border: #e5e7eb;
+
+    --sidebar: #111827;
+    --sidebar-hover: #252d40;
+
+    --shadow: 0 8px 25px rgba(15, 23, 42, 0.07);
+}
+
+body.dark {
+    --bg: #0b1120;
+    --card: #151e30;
+    --text: #f1f5f9;
+    --muted: #aab4c5;
+    --border: #293548;
+    --sidebar: #080d19;
+    --sidebar-hover: #1d2638;
+    --shadow: 0 8px 25px rgba(0,0,0,.25);
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: Inter, Arial, Helvetica, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    transition: background .3s, color .3s;
+}
+
+button,
+input,
+select,
+textarea {
+    font-family: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* =========================================================
+   APP LAYOUT
+========================================================= */
+
+.app {
+    min-height: 100vh;
+    display: flex;
+}
+
+.sidebar {
+    width: 260px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    background: var(--sidebar);
+    color: white;
+    padding: 24px 16px;
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+.logo {
+    font-size: 25px;
+    font-weight: 800;
+    padding: 8px 14px 28px;
+}
+
+.logo span {
+    color: #8b8df5;
+}
+
+.logo small {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: #94a3b8;
+    margin-top: 4px;
+}
+
+.nav-title {
+    color: #64748b;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 15px 14px 7px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #cbd5e1;
+    padding: 12px 14px;
+    margin: 4px 0;
+    border-radius: 10px;
+    transition: .2s;
+    user-select: none;
+}
+
+.nav-item:hover,
+.nav-item.active {
+    background: var(--sidebar-hover);
+    color: white;
+}
+
+.nav-icon {
+    width: 25px;
+    text-align: center;
+    font-size: 17px;
+}
+
+.main {
+    width: calc(100% - 260px);
+    margin-left: 260px;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.header {
+    height: 74px;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    position: sticky;
+    top: 0;
+    z-index: 500;
+}
+
+.search {
+    width: 390px;
+    position: relative;
+}
+
+.search input {
+    width: 100%;
+    height: 42px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    border-radius: 10px;
+    padding: 0 15px 0 40px;
+    outline: none;
+}
+
+.search span {
+    position: absolute;
+    left: 14px;
+    top: 11px;
+}
+
+.header-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.icon-button {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+}
+
+.profile-mini {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-left: 8px;
+}
+
+.avatar {
+    width: 38px;
+    height: 38px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    color: white;
+    font-weight: bold;
+}
+
+.menu-button {
+    display: none;
+}
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.content {
+    padding: 30px;
+    max-width: 1700px;
+    margin: auto;
+}
+
+.page {
+    display: none;
+}
+
+.page.active {
+    display: block;
+}
+
+.page-title {
+    font-size: 30px;
+    margin-bottom: 7px;
+}
+
+.page-subtitle {
+    color: var(--muted);
+    margin-bottom: 26px;
+}
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.btn {
+    border: none;
+    background: var(--primary);
+    color: white;
+    padding: 11px 17px;
+    border-radius: 9px;
+    font-weight: 600;
+    transition: .2s;
+}
+
+.btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+.btn.secondary {
+    background: #eef0ff;
+    color: var(--primary-dark);
+}
+
+body.dark .btn.secondary {
+    background: #252a52;
+    color: #c7c9ff;
+}
+
+.btn.success {
+    background: var(--success);
+}
+
+.btn.danger {
+    background: var(--danger);
+}
+
+.btn.warning {
+    background: var(--warning);
+}
+
+.btn.outline {
+    background: transparent;
+    color: var(--primary);
+    border: 1px solid var(--primary);
+}
+
+.btn.small {
+    padding: 8px 12px;
+    font-size: 13px;
+}
+
+/* =========================================================
+   CARDS
+========================================================= */
+
+.card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px;
+    box-shadow: var(--shadow);
+}
+
+.card-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 18px;
+}
+
+.card-title h2 {
+    font-size: 19px;
+}
+
+.muted {
+    color: var(--muted);
+}
+
+.grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+
+.grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 17px;
+}
+
+/* =========================================================
+   DASHBOARD
+========================================================= */
+
+.hero {
+    background:
+        radial-gradient(circle at 90% 20%, rgba(139,92,246,.45), transparent 30%),
+        linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: white;
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 22px;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero h1 {
+    font-size: 31px;
+    margin-bottom: 10px;
+}
+
+.hero p {
+    max-width: 680px;
+    color: #e0e7ff;
+    line-height: 1.6;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.hero .btn {
+    background: white;
+    color: #4f46e5;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 17px;
+    margin-bottom: 22px;
+}
+
+.stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    padding: 19px;
+    box-shadow: var(--shadow);
+}
+
+.stat-icon {
+    float: right;
+    font-size: 24px;
+}
+
+.stat-card small {
+    color: var(--muted);
+}
+
+.stat-value {
+    font-size: 28px;
+    font-weight: 800;
+    margin: 7px 0;
+}
+
+.stat-change {
+    font-size: 12px;
+    color: var(--success);
+}
+
+/* =========================================================
+   PROGRESS
+========================================================= */
+
+.progress-bg {
+    width: 100%;
+    height: 9px;
+    background: var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    border-radius: 20px;
+    transition: width .5s;
+}
+
+.progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    margin-bottom: 7px;
+}
+
+/* =========================================================
+   TOPICS
+========================================================= */
+
+.topic-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    position: relative;
+    transition: .25s;
+}
+
+.topic-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--primary);
+    box-shadow: var(--shadow);
+}
+
+.topic-icon {
+    font-size: 34px;
+    margin-bottom: 12px;
+}
+
+.topic-card h3 {
+    margin-bottom: 8px;
+}
+
+.topic-card p {
+    color: var(--muted);
+    line-height: 1.5;
+    font-size: 14px;
+}
+
+.topic-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.bookmark {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    border: none;
+    background: transparent;
+    font-size: 20px;
+    color: var(--muted);
+}
+
+.bookmark.saved {
+    color: #f59e0b;
+}
+
+/* =========================================================
+   LESSON
+========================================================= */
+
+.lesson-box {
+    min-height: 260px;
+}
+
+.lesson-number {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 20px;
+    background: #eef0ff;
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+body.dark .lesson-number {
+    background: #272b54;
+}
+
+.formula {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    text-align: center;
+    font-size: 24px;
+    margin: 18px 0;
+    font-family: Georgia, serif;
+}
+
+.example {
+    border-left: 4px solid var(--primary);
+    background: var(--bg);
+    padding: 16px;
+    line-height: 1.7;
+    margin: 15px 0;
+}
+
+.lesson-controls {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+.quiz-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 18px;
+}
+
+.quiz-meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.badge {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 20px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    font-size: 12px;
+}
+
+.question-box {
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 1.5;
+    margin: 20px 0;
+}
+
+.option {
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin: 9px 0;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.option:hover {
+    border-color: var(--primary);
+    background: var(--bg);
+}
+
+.option.correct {
+    background: #dcfce7;
+    color: #166534;
+    border-color: #22c55e;
+}
+
+.option.wrong {
+    background: #fee2e2;
+    color: #991b1b;
+    border-color: #ef4444;
+}
+
+body.dark .option.correct {
+    background: #123820;
+    color: #86efac;
+}
+
+body.dark .option.wrong {
+    background: #45191c;
+    color: #fca5a5;
+}
+
+.hint-box {
+    background: #fff7ed;
+    color: #9a3412;
+    border: 1px solid #fed7aa;
+    border-radius: 10px;
+    padding: 13px;
+    margin-top: 14px;
+}
+
+body.dark .hint-box {
+    background: #38200f;
+    color: #fdba74;
+    border-color: #7c2d12;
+}
+
+/* =========================================================
+   XP / LEVEL
+========================================================= */
+
+.level-card {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.level-circle {
+    width: 82px;
+    height: 82px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    font-size: 24px;
+    font-weight: 800;
+    flex-shrink: 0;
+}
+
+/* =========================================================
+   CALCULATOR
+========================================================= */
+
+.calculator {
+    max-width: 500px;
+}
+
+.calc-display {
+    width: 100%;
+    height: 72px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    border-radius: 12px;
+    padding: 12px 15px;
+    font-size: 27px;
+    text-align: right;
+    outline: none;
+    margin-bottom: 12px;
+}
+
+.calc-history {
+    color: var(--muted);
+    min-height: 25px;
+    text-align: right;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+.calc-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+}
+
+.calc-grid button {
+    padding: 15px 5px;
+    border: none;
+    border-radius: 9px;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+}
+
+.calc-grid button:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.calc-grid .operator {
+    color: var(--primary);
+    font-weight: bold;
+}
+
+.calc-grid .equal {
+    background: var(--primary);
+    color: white;
+}
+
+/* =========================================================
+   GRAPH
+========================================================= */
+
+.graph-controls {
+    display: grid;
+    grid-template-columns: 1fr 120px 120px;
+    gap: 10px;
+}
+
+.input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: var(--bg);
+    color: var(--text);
+    outline: none;
+}
+
+canvas {
+    width: 100%;
+    height: 420px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-top: 18px;
+    background: var(--card);
+}
+
+/* =========================================================
+   TOOLS
+========================================================= */
+
+.tool-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.tool-tab {
+    padding: 9px 13px;
+    border-radius: 9px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+}
+
+.tool-tab.active {
+    background: var(--primary);
+    color: white;
+}
+
+.tool-panel {
+    display: none;
+}
+
+.tool-panel.active {
+    display: block;
+}
+
+.result {
+    margin-top: 16px;
+    padding: 17px;
+    border-radius: 10px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    line-height: 1.8;
+}
+
+/* =========================================================
+   DAILY CHALLENGE
+========================================================= */
+
+.challenge {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: white;
+}
+
+.challenge p {
+    color: #cbd5e1;
+    line-height: 1.6;
+}
+
+.challenge-question {
+    font-size: 20px;
+    margin: 16px 0;
+}
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    text-align: left;
+    padding: 12px;
+    border-bottom: 1px solid var(--border);
+}
+
+th {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+/* =========================================================
+   SETTINGS
+========================================================= */
+
+.setting {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.switch {
+    position: relative;
+    width: 48px;
+    height: 25px;
+}
+
+.switch input {
+    display: none;
+}
+
+.slider {
+    position: absolute;
+    inset: 0;
+    background: #cbd5e1;
+    border-radius: 20px;
+}
+
+.slider:before {
+    content: "";
+    position: absolute;
+    width: 19px;
+    height: 19px;
+    left: 3px;
+    top: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: .2s;
+}
+
+.switch input:checked + .slider {
+    background: var(--primary);
+}
+
+.switch input:checked + .slider:before {
+    transform: translateX(23px);
+}
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+.toast {
+    position: fixed;
+    right: 25px;
+    bottom: 25px;
+    background: #111827;
+    color: white;
+    padding: 14px 19px;
+    border-radius: 10px;
+    z-index: 9999;
+    display: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,.2);
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 1100px) {
+
+    .stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .grid-3 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 800px) {
+
+    .sidebar {
+        transform: translateX(-100%);
+        transition: .3s;
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .main {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .menu-button {
+        display: block;
+    }
+
+    .header {
+        padding: 0 15px;
+    }
+
+    .search {
+        width: 260px;
+    }
+
+    .grid-2,
+    .grid-3 {
+        grid-template-columns: 1fr;
+    }
+
+    .content {
+        padding: 18px;
+    }
+
+    .graph-controls {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 550px) {
+
+    .stats,
+    .grid-4 {
+        grid-template-columns: 1fr;
+    }
+
+    .search {
+        display: none;
+    }
+
+    .profile-mini {
+        display: none;
+    }
+
+    .page-title {
+        font-size: 24px;
+    }
+
+    .hero h1 {
+        font-size: 24px;
+    }
+
+    .calc-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .level-card {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<!-- =======================================================
+     SIDEBAR
+======================================================= -->
+
+<aside class="sidebar" id="sidebar">
+
+    <div class="logo">
+        Math<span>Guide</span>
+        <small>LEARN • PRACTICE • MASTER</small>
+    </div>
+
+    <div class="nav-title">Main</div>
+
+    <div class="nav-item active"
+         onclick="showPage('dashboard', this)">
+        <span class="nav-icon">🏠</span>
+        Dashboard
+    </div>
+
+    <div class="nav-item"
+         onclick="showPage('topics', this)">
+        <span class="nav-icon">📚</span>
+        Topics
+    </div>
+
+    <div class="nav-item"
+         onclick="showPage('lessons', this)">
+        <span class="nav-icon">🎓</span>
+        Interactive Lessons
+    </div>
+
+    <div class="nav-item"
+         onclick="showPage('practice', this)">
+        <span class="nav-icon">🧠</span>
+        Practice
+    </div>
+
+    <div class="nav-item"
+         onclick="showPage('challenge', this)">
+        <span class="nav-icon">🔥</span>
+        Daily Challenge
+    </div>
+
+    <div class="nav-title">Tools</div>
+
+    <div class="nav-item"
+         onclick="showPage('calculator', this)">
+        <span class="nav-icon">🧮</span>
+        Calculator
+    </div>
+
+    <div class="nav-item"
+         onclick="showPage('solver', this)">
+        <span class="nav-icon">✏️</span>
+        Equation Solver
+    </div>
+
+    <div class="nav-item"
+         onclick="showPage('graphs', this)">
+        <span class="nav-icon">📈</span>
+        Graph Studio
+    </div>
+
+    <div class="nav-item"
+         onclick="showPage('math-tools', this)">
+        <span class="nav-icon">🔧</span>
+        Math Tools
+    </div>
+
+    <div class="nav-title">My Learning</div>
+
+    <div class="nav-item"
+         onclick="showPage('progress', this)">
+        <span class="nav-icon">📊</span>
+        Progress
+    </div>
+
+    <div class="nav-item"
+         onclick="showPage('bookmarks', this)">
+        <span class="nav-icon">⭐</span>
+        Bookmarks
+    </div>
+
+    <div class="nav-item"
+         onclick="showPage('settings', this)">
+        <span class="nav-icon">⚙️</span>
+        Settings
+    </div>
+
+</aside>
+
+
+<!-- =======================================================
+     MAIN
+======================================================= -->
+
+<main class="main">
+
+<header class="header">
+
+    <button class="icon-button menu-button"
+            onclick="toggleSidebar()">
+        ☰
+    </button>
+
+    <div class="search">
+        <span>🔎</span>
+
+        <input
+            id="globalSearch"
+            placeholder="Search topics, tools, lessons..."
+            oninput="globalSearch()"
+        >
+    </div>
+
+    <div class="header-actions">
+
+        <button class="icon-button"
+                onclick="toggleDarkMode()">
+            🌙
+        </button>
+
+        <button class="icon-button"
+                onclick="showToast('No new notifications')">
+            🔔
+        </button>
+
+        <div class="profile-mini">
+            <div class="avatar">S</div>
+            <strong>Student</strong>
+        </div>
+
+    </div>
+
+</header>
+
+
+<div class="content">
+
+
+<!-- =======================================================
+     DASHBOARD
+======================================================= -->
+
+<section class="page active" id="dashboard">
+
+    <div class="hero">
+
+        <h1>Master Mathematics Smarter 🚀</h1>
+
+        <p>
+            Learn concepts, solve problems, visualize functions,
+            practice with instant feedback and track your progress
+            — all in one interactive mathematics platform.
+        </p>
+
+        <div class="hero-buttons">
+
+            <button class="btn"
+                    onclick="showPage('practice')">
+                Start Practice
+            </button>
+
+            <button class="btn"
+                    onclick="showPage('lessons')">
+                Explore Lessons
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div class="stats">
+
+        <div class="stat-card">
+            <span class="stat-icon">⚡</span>
+            <small>XP Points</small>
+            <div class="stat-value"
+                 id="xpStat">0</div>
+            <span class="stat-change">Keep learning!</span>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-icon">🎯</span>
+            <small>Quiz Accuracy</small>
+            <div class="stat-value"
+                 id="accuracyStat">0%</div>
+            <span class="stat-change">Practice improves accuracy</span>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-icon">🔥</span>
+            <small>Learning Streak</small>
+            <div class="stat-value"
+                 id="streakStat">1</div>
+            <span class="stat-change">day streak</span>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-icon">🏆</span>
+            <small>Level</small>
+            <div class="stat-value"
+                 id="levelStat">1</div>
+            <span class="stat-change"
+                  id="levelName">Beginner</span>
+        </div>
+
+    </div>
+
+
+    <div class="grid-2">
+
+        <div class="card">
+
+            <div class="card-title">
+                <h2>Your Learning Level</h2>
+                <span id="levelBadge"
+                      class="badge">
+                    Level 1
+                </span>
+            </div>
+
+            <div class="level-card">
+
+                <div class="level-circle"
+                     id="levelCircle">
+                    1
+                </div>
+
+                <div style="width:100%">
+
+                    <h3 id="levelTitle">
+                        Mathematics Beginner
+                    </h3>
+
+                    <p class="muted"
+                       style="margin:6px 0 12px">
+                        Earn XP by completing lessons
+                        and solving questions.
+                    </p>
+
+                    <div class="progress-label">
+                        <span>Progress to next level</span>
+                        <span id="xpProgressText">0 / 100 XP</span>
+                    </div>
+
+                    <div class="progress-bg">
+                        <div class="progress-fill"
+                             id="xpProgress"
+                             style="width:0%">
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card challenge">
+
+            <div class="card-title">
+                <h2>🔥 Daily Challenge</h2>
+                <span class="badge">
+                    +25 XP
+                </span>
+            </div>
+
+            <p>
+                Complete today's challenge to earn
+                bonus XP and maintain your learning streak.
+            </p>
+
+            <div class="challenge-question">
+                What is the derivative of
+                <strong>x³ + 2x</strong>?
+            </div>
+
+            <button class="btn"
+                    onclick="showPage('challenge')">
+                Attempt Challenge →
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <br>
+
+
+    <div class="grid-3">
+
+        <div class="card">
+
+            <div class="card-title">
+                <h2>Continue Learning</h2>
+                <span>📖</span>
+            </div>
+
+            <h3>Introduction to Derivatives</h3>
+
+            <p class="muted"
+               style="margin:8px 0 15px">
+                Understand the meaning of derivative,
+                notation and basic rules.
+            </p>
+
+            <div class="progress-label">
+                <span>72% complete</span>
+                <span>4/6</span>
+            </div>
+
+            <div class="progress-bg">
+                <div class="progress-fill"
+                     style="width:72%">
+                </div>
+            </div>
+
+            <br>
+
+            <button class="btn small"
+                    onclick="showPage('lessons')">
+                Continue
+            </button>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-title">
+                <h2>Quick Calculator</h2>
+                <span>🧮</span>
+            </div>
+
+            <p class="muted">
+                Need a quick calculation?
+            </p>
+
+            <br>
+
+            <button class="btn"
+                    onclick="showPage('calculator')">
+                Open Calculator
+            </button>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-title">
+                <h2>Graph Studio</h2>
+                <span>📈</span>
+            </div>
+
+            <p class="muted">
+                Visualize mathematical functions.
+            </p>
+
+            <br>
+
+            <button class="btn"
+                    onclick="showPage('graphs')">
+                Open Graph Studio
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =======================================================
+     TOPICS
+======================================================= -->
+
+<section class="page" id="topics">
+
+    <h1 class="page-title">
+        Mathematics Topics
+    </h1>
+
+    <p class="page-subtitle">
+        Explore concepts from fundamentals to advanced mathematics.
+    </p>
+
+    <div class="grid-3" id="topicsGrid">
+
+
+        <div class="topic-card"
+             data-search="algebra equations functions">
+
+            <button class="bookmark"
+                    data-topic="Algebra"
+                    onclick="toggleBookmark(this)">
+                ☆
+            </button>
+
+            <div class="topic-icon">🔢</div>
+
+            <h3>Algebra</h3>
+
+            <p>
+                Expressions, equations, inequalities,
+                functions and polynomials.
+            </p>
+
+            <div class="topic-actions">
+
+                <button class="btn small"
+                        onclick="openTopicLesson('Algebra')">
+                    Learn
+                </button>
+
+                <button class="btn secondary small"
+                        onclick="practiceTopic('Algebra')">
+                    Practice
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="topic-card"
+             data-search="calculus derivative integral limit">
+
+            <button class="bookmark"
+                    data-topic="Calculus"
+                    onclick="toggleBookmark(this)">
+                ☆
+            </button>
+
+            <div class="topic-icon">∫</div>
+
+            <h3>Calculus</h3>
+
+            <p>
+                Limits, derivatives, integrals,
+                continuity and applications.
+            </p>
+
+            <div class="topic-actions">
+
+                <button class="btn small"
+                        onclick="openTopicLesson('Calculus')">
+                    Learn
+                </button>
+
+                <button class="btn secondary small"
+                        onclick="practiceTopic('Calculus')">
+                    Practice
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="topic-card"
+             data-search="geometry triangles circles area volume">
+
+            <button class="bookmark"
+                    data-topic="Geometry"
+                    onclick="toggleBookmark(this)">
+                ☆
+            </button>
+
+            <div class="topic-icon">📐</div>
+
+            <h3>Geometry</h3>
+
+            <p>
+                Angles, triangles, circles,
+                area, volume and coordinate geometry.
+            </p>
+
+            <div class="topic-actions">
+
+                <button class="btn small"
+                        onclick="openTopicLesson('Geometry')">
+                    Learn
+                </button>
+
+                <button class="btn secondary small"
+                        onclick="practiceTopic('Geometry')">
+                    Practice
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="topic-card"
+             data-search="statistics mean median mode variance">
+
+            <button class="bookmark"
+                    data-topic="Statistics"
+                    onclick="toggleBookmark(this)">
+                ☆
+            </button>
+
+            <div class="topic-icon">📊</div>
+
+            <h3>Statistics</h3>
+
+            <p>
+                Mean, median, mode, variance,
+                standard deviation and data.
+            </p>
+
+            <div class="topic-actions">
+
+                <button class="btn small"
+                        onclick="openTopicLesson('Statistics')">
+                    Learn
+                </button>
+
+                <button class="btn secondary small"
+                        onclick="practiceTopic('Statistics')">
+                    Practice
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="topic-card"
+             data-search="probability events probability distributions">
+
+            <button class="bookmark"
+                    data-topic="Probability"
+                    onclick="toggleBookmark(this)">
+                ☆
+            </button>
+
+            <div class="topic-icon">🎲</div>
+
+            <h3>Probability</h3>
+
+            <p>
+                Events, sample spaces,
+                conditional probability and distributions.
+            </p>
+
+            <div class="topic-actions">
+
+                <button class="btn small"
+                        onclick="openTopicLesson('Probability')">
+                    Learn
+                </button>
+
+                <button class="btn secondary small"
+                        onclick="practiceTopic('Probability')">
+                    Practice
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="topic-card"
+             data-search="linear algebra matrices vectors determinants">
+
+            <button class="bookmark"
+                    data-topic="Linear Algebra"
+                    onclick="toggleBookmark(this)">
+                ☆
+            </button>
+
+            <div class="topic-icon">🧮</div>
+
+            <h3>Linear Algebra</h3>
+
+            <p>
+                Vectors, matrices, determinants
+                and systems of equations.
+            </p>
+
+            <div class="topic-actions">
+
+                <button class="btn small"
+                        onclick="openTopicLesson('Linear Algebra')">
+                    Learn
+                </button>
+
+                <button class="btn secondary small"
+                        onclick="practiceTopic('Linear Algebra')">
+                    Practice
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =======================================================
+     LESSONS
+======================================================= -->
+
+<section class="page" id="lessons">
+
+    <h1 class="page-title">
+        Interactive Lessons
+    </h1>
+
+    <p class="page-subtitle">
+        Learn one concept at a time with examples and formulas.
+    </p>
+
+    <div class="card lesson-box">
+
+        <span class="lesson-number"
+              id="lessonNumber">
+            Lesson 1
+        </span>
+
+        <h2 id="lessonTitle">
+            What is a Derivative?
+        </h2>
+
+        <p id="lessonText"
+           class="muted"
+           style="line-height:1.8;margin-top:12px">
+            A derivative measures how a function changes
+            with respect to its input. Geometrically,
+            it represents the slope of the tangent line.
+        </p>
+
+        <div class="formula"
+             id="lessonFormula">
+            f'(x) = lim h→0 [f(x+h) − f(x)] / h
+        </div>
+
+        <div class="example"
+             id="lessonExample">
+
+            <strong>Example:</strong>
+
+            <br>
+
+            If f(x) = x², then:
+
+            <br>
+
+            f'(x) = 2x
+
+        </div>
+
+        <div class="lesson-controls">
+
+            <button class="btn secondary"
+                    onclick="previousLesson()">
+                ← Previous
+            </button>
+
+            <span id="lessonCounter"
+                  class="badge">
+                1 / 5
+            </span>
+
+            <button class="btn"
+                    onclick="nextLesson()">
+                Next →
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =======================================================
+     PRACTICE
+======================================================= -->
+
+<section class="page" id="practice">
+
+    <h1 class="page-title">
+        Practice Center
+    </h1>
+
+    <p class="page-subtitle">
+        Test yourself. Questions are generated from the practice bank.
+    </p>
+
+    <div class="grid-2">
+
+        <div class="card">
+
+            <div class="quiz-header">
+
+                <div class="quiz-meta">
+
+                    <span class="badge"
+                          id="questionCounter">
+                        Question 1
+                    </span>
+
+                    <span class="badge">
+                        +10 XP
+                    </span>
+
+                </div>
+
+                <strong id="practiceScore">
+                    Score: 0
+                </strong>
+
+            </div>
+
+            <div class="progress-bg">
+                <div class="progress-fill"
+                     id="quizProgress"
+                     style="width:0%">
+                </div>
+            </div>
+
+            <div class="question-box"
+                 id="practiceQuestion">
+                Loading question...
+            </div>
+
+            <div id="practiceOptions"></div>
+
+            <div id="hintArea"></div>
+
+            <div style="display:flex;gap:9px;margin-top:15px;flex-wrap:wrap">
+
+                <button class="btn warning"
+                        onclick="showHint()">
+                    💡 Hint
+                </button>
+
+                <button class="btn secondary"
+                        onclick="newPracticeQuestion()">
+                    🔄 New Question
+                </button>
+
+                <button class="btn"
+                        onclick="nextPracticeQuestion()">
+                    Next →
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h2>Practice Statistics</h2>
+
+            <br>
+
+            <div class="progress-label">
+                <span>Correct answers</span>
+                <strong id="correctCount">0</strong>
+            </div>
+
+            <div class="progress-bg">
+                <div class="progress-fill"
+                     id="correctBar"
+                     style="width:0%">
+                </div>
+            </div>
+
+            <br>
+
+            <div class="progress-label">
+                <span>Questions attempted</span>
+                <strong id="attemptCount">0</strong>
+            </div>
+
+            <br>
+
+            <p class="muted">
+                Tip: Use the hint only when you really need it.
+                Try solving the problem yourself first.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =======================================================
+     DAILY CHALLENGE
+======================================================= -->
+
+<section class="page" id="challenge">
+
+    <h1 class="page-title">
+        Daily Challenge 🔥
+    </h1>
+
+    <p class="page-subtitle">
+        One challenge every day. Complete it to earn bonus XP.
+    </p>
+
+    <div class="card challenge">
+
+        <span class="badge">
+            Today's Challenge • +25 XP
+        </span>
+
+        <div class="challenge-question">
+
+            If
+
+            <strong>
+                f(x) = x³ + 2x² − 5x
+            </strong>
+
+            find f'(x).
+
+        </div>
+
+        <div id="challengeOptions"></div>
+
+        <button class="btn"
+                onclick="submitChallenge()">
+            Submit Answer
+        </button>
+
+        <div id="challengeResult"
+             style="margin-top:15px">
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =======================================================
+     CALCULATOR
+======================================================= -->
+
+<section class="page" id="calculator">
+
+    <h1 class="page-title">
+        Scientific Calculator
+    </h1>
+
+    <p class="page-subtitle">
+        Perform arithmetic and common scientific calculations.
+    </p>
+
+    <div class="grid-2">
+
+        <div class="card calculator">
+
+            <div class="calc-history"
+                 id="calcHistory">
+            </div>
+
+            <input
+                id="calcDisplay"
+                class="calc-display"
+                readonly
+            >
+
+            <div class="calc-grid">
+
+                <button onclick="calcClear()">C</button>
+                <button onclick="calcDelete()">⌫</button>
+                <button onclick="calcAdd('(')">(</button>
+                <button onclick="calcAdd(')')">)</button>
+                <button class="operator"
+                        onclick="calcAdd('/')">÷</button>
+
+                <button onclick="calcAdd('7')">7</button>
+                <button onclick="calcAdd('8')">8</button>
+                <button onclick="calcAdd('9')">9</button>
+                <button class="operator"
+                        onclick="calcAdd('*')">×</button>
+                <button class="operator"
+                        onclick="calcAdd('Math.sqrt(')">
+                    √
+                </button>
+
+                <button onclick="calcAdd('4')">4</button>
+                <button onclick="calcAdd('5')">5</button>
+                <button onclick="calcAdd('6')">6</button>
+                <button class="operator"
+                        onclick="calcAdd('-')">−</button>
+                <button class="operator"
+                        onclick="calcAdd('**')">xʸ</button>
+
+                <button onclick="calcAdd('1')">1</button>
+                <button onclick="calcAdd('2')">2</button>
+                <button onclick="calcAdd('3')">3</button>
+                <button class="operator"
+                        onclick="calcAdd('+')">+</button>
+                <button onclick="calcAdd('.')">.</button>
+
+                <button onclick="calcAdd('0')">0</button>
+                <button onclick="calcAdd('Math.sin(')">sin</button>
+                <button onclick="calcAdd('Math.cos(')">cos</button>
+                <button onclick="calcAdd('Math.tan(')">tan</button>
+                <button class="equal"
+                        onclick="calcCalculate()">
+                    =
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h2>Calculation History</h2>
+
+            <br>
+
+            <div id="calculationHistory"
+                 class="muted">
+                No calculations yet.
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =======================================================
+     SOLVER
+======================================================= -->
+
+<section class="page" id="solver">
+
+    <h1 class="page-title">
+        Equation Solver
+    </h1>
+
+    <p class="page-subtitle">
+        Solve simple linear equations with an explanation.
+    </p>
+
+    <div class="grid-2">
+
+        <div class="card">
+
+            <h2>Enter Equation</h2>
+
+            <p class="muted"
+               style="margin:8px 0">
+                Examples: 2x + 5 = 15
+                or 3x - 4 = 11
+            </p>
+
+            <input
+                class="input"
+                id="equationInput"
+                placeholder="2x + 5 = 15"
+            >
+
+            <br><br>
+
+            <button class="btn"
+                    onclick="solveEquation()">
+                Solve Step by Step
+            </button>
+
+        </div>
+
+
+        <div class="card">
+
+            <h2>Solution</h2>
+
+            <div id="solutionBox"
+                 class="result">
+                Your solution will appear here.
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =======================================================
+     GRAPH STUDIO
+======================================================= -->
+
+<section class="page" id="graphs">
+
+    <h1 class="page-title">
+        Graph Studio
+    </h1>
+
+    <p class="page-subtitle">
+        Enter a function and visualize it instantly.
+    </p>
+
+    <div class="card">
+
+        <div class="graph-controls">
+
+            <input
+                class="input"
+                id="functionInput"
+                value="x*x"
+                placeholder="Example: x*x + 2*x - 3"
+            >
+
+            <input
+                class="input"
+                id="graphScale"
+                type="number"
+                value="35"
+                min="10"
+                max="80"
+            >
+
+            <button class="btn"
+                    onclick="drawGraph()">
+                Draw Graph
+            </button>
+
+        </div>
+
+        <p class="muted"
+           style="margin-top:10px">
+            Supported examples:
+            x*x, x**3, sin(x), cos(x), tan(x),
+            sqrt(x), 2*x+1
+        </p>
+
+        <canvas id="graphCanvas"
+                width="1000"
+                height="500">
+        </canvas>
+
+    </div>
+
+</section>
+
+
+<!-- =======================================================
+     MATH TOOLS
+======================================================= -->
+
+<section class="page" id="math-tools">
+
+    <h1 class="page-title">
+        Math Tools
+    </h1>
+
+    <p class="page-subtitle">
+        Useful calculators for common mathematical problems.
+    </p>
+
+    <div class="tool-tabs">
+
+        <button class="tool-tab active"
+                onclick="openTool('percentage', this)">
+            Percentage
+        </button>
+
+        <button class="tool-tab"
+                onclick="openTool('quadratic', this)">
+            Quadratic
+        </button>
+
+        <button class="tool-tab"
+                onclick="openTool('statistics', this)">
+            Statistics
+        </button>
+
+        <button class="tool-tab"
+                onclick="openTool('geometry', this)">
+            Circle
+        </button>
+
+    </div>
+
+
+    <div class="card tool-panel active"
+         id="percentage">
+
+        <h2>Percentage Calculator</h2>
+
+        <p class="muted">
+            Find what percentage one number is of another.
+        </p>
+
+        <br>
+
+        <div class="grid-2">
+
+            <input class="input"
+                   id="percentA"
+                   type="number"
+                   placeholder="Value">
+
+            <input class="input"
+                   id="percentB"
+                   type="number"
+                   placeholder="Total">
+
+        </div>
+
+        <br>
+
+        <button class="btn"
+                onclick="calculatePercentage()">
+            Calculate
+        </button>
+
+        <div class="result"
+             id="percentageResult">
+        </div>
+
+    </div>
+
+
+    <div class="card tool-panel"
+         id="quadratic">
+
+        <h2>Quadratic Equation</h2>
+
+        <p class="muted">
+            Solve ax² + bx + c = 0.
+        </p>
+
+        <br>
+
+        <div class="grid-3">
+
+            <input class="input"
+                   id="qa"
+                   type="number"
+                   placeholder="a">
+
+            <input class="input"
+                   id="qb"
+                   type="number"
+                   placeholder="b">
+
+            <input class="input"
+                   id="qc"
+                   type="number"
+                   placeholder="c">
+
+        </div>
+
+        <br>
+
+        <button class="btn"
+                onclick="solveQuadratic()">
+            Solve
+        </button>
+
+        <div class="result"
+             id="quadraticResult">
+        </div>
+
+    </div>
+
+
+    <div class="card tool-panel"
+         id="statistics">
+
+        <h2>Statistics Calculator</h2>
+
+        <p class="muted">
+            Enter numbers separated by commas.
+        </p>
+
+        <br>
+
+        <input class="input"
+               id="statisticsInput"
+               placeholder="10, 20, 30, 40, 50">
+
+        <br><br>
+
+        <button class="btn"
+                onclick="calculateStatistics()">
+            Analyze Data
+        </button>
+
+        <div class="result"
+             id="statisticsResult">
+        </div>
+
+    </div>
+
+
+    <div class="card tool-panel"
+         id="geometry">
+
+        <h2>Circle Calculator</h2>
+
+        <p class="muted">
+            Calculate area and circumference.
+        </p>
+
+        <br>
+
+        <input class="input"
+               id="radiusInput"
+               type="number"
+               placeholder="Radius">
+
+        <br><br>
+
+        <button class="btn"
+                onclick="calculateCircle()">
+            Calculate
+        </button>
+
+        <div class="result"
+             id="circleResult">
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =======================================================
+     PROGRESS
+======================================================= -->
+
+<section class="page" id="progress">
+
+    <h1 class="page-title">
+        My Progress
+    </h1>
+
+    <p class="page-subtitle">
+        Track your mathematical learning journey.
+    </p>
+
+    <div class="grid-3">
+
+        <div class="card">
+
+            <h2>Total XP</h2>
+
+            <div class="stat-value"
+                 id="progressXP">
+                0
+            </div>
+
+            <p class="muted">
+                Earn XP by learning and practicing.
+            </p>
+
+        </div>
+
+        <div class="card">
+
+            <h2>Questions</h2>
+
+            <div class="stat-value"
+                 id="progressQuestions">
+                0
+            </div>
+
+            <p class="muted">
+                Questions attempted.
+            </p>
+
+        </div>
+
+        <div class="card">
+
+            <h2>Accuracy</h2>
+
+            <div class="stat-value"
+                 id="progressAccuracy">
+                0%
+            </div>
+
+            <p class="muted">
+                Your overall accuracy.
+            </p>
+
+        </div>
+
+    </div>
+
+    <br>
+
+    <div class="card">
+
+        <h2>Topic Progress</h2>
+
+        <br>
+
+        <div class="progress-label">
+            <span>Algebra</span>
+            <strong>85%</strong>
+        </div>
+
+        <div class="progress-bg">
+            <div class="progress-fill"
+                 style="width:85%">
+            </div>
+        </div>
+
+        <br>
+
+        <div class="progress-label">
+            <span>Calculus</span>
+            <strong>72%</strong>
+        </div>
+
+        <div class="progress-bg">
+            <div class="progress-fill"
+                 style="width:72%">
+            </div>
+        </div>
+
+        <br>
+
+        <div class="progress-label">
+            <span>Statistics</span>
+            <strong>60%</strong>
+        </div>
+
+        <div class="progress-bg">
+            <div class="progress-fill"
+                 style="width:60%">
+            </div>
+        </div>
+
+        <br>
+
+        <div class="progress-label">
+            <span>Geometry</span>
+            <strong>55%</strong>
+        </div>
+
+        <div class="progress-bg">
+            <div class="progress-fill"
+                 style="width:55%">
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =======================================================
+     BOOKMARKS
+======================================================= -->
+
+<section class="page" id="bookmarks">
+
+    <h1 class="page-title">
+        My Bookmarks ⭐
+    </h1>
+
+    <p class="page-subtitle">
+        Save topics you want to study later.
+    </p>
+
+    <div class="card">
+
+        <div id="bookmarkList">
+            No bookmarks yet.
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =======================================================
+     SETTINGS
+======================================================= -->
+
+<section class="page" id="settings">
+
+    <h1 class="page-title">
+        Settings
+    </h1>
+
+    <p class="page-subtitle">
+        Customize your MathGuide experience.
+    </p>
+
+    <div class="card">
+
+        <div class="setting">
+
+            <div>
+                <strong>Dark Mode</strong>
+                <p class="muted">
+                    Use a dark interface.
+                </p>
+            </div>
+
+            <label class="switch">
+
+                <input
+                    type="checkbox"
+                    id="darkToggle"
+                    onchange="toggleDarkMode()"
+                >
+
+                <span class="slider"></span>
+
+            </label>
+
+        </div>
+
+
+        <div class="setting">
+
+            <div>
+                <strong>Reset Progress</strong>
+                <p class="muted">
+                    Clear XP, quiz statistics and saved data.
+                </p>
+            </div>
+
+            <button class="btn danger"
+                    onclick="resetProgress()">
+                Reset
+            </button>
+
+        </div>
+
+
+        <div class="setting">
+
+            <div>
+                <strong>About MathGuide</strong>
+                <p class="muted">
+                    Interactive mathematics learning platform.
+                </p>
+            </div>
+
+            <span class="badge">
+                v2.0
+            </span>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+</div>
+</main>
+</div>
+
+
+<!-- TOAST -->
+
+<div class="toast"
+     id="toast">
+</div>
+
+
+<script>
+
+/* =========================================================
+   GLOBAL DATA
+========================================================= */
+
+let appData = JSON.parse(
+    localStorage.getItem("mathGuideData")
+) || {
+
+    xp: 0,
+    correct: 0,
+    attempts: 0,
+    streak: 1,
+    bookmarks: [],
+    challengeCompleted: false,
+    lesson: 0,
+    lastDate: new Date().toDateString()
+
+};
+
+
+/* =========================================================
+   SAVE DATA
+========================================================= */
+
+function saveData() {
+
+    localStorage.setItem(
+        "mathGuideData",
+        JSON.stringify(appData)
+    );
+
+    updateDashboard();
+
+}
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+function showPage(pageId, element) {
+
+    document.querySelectorAll(".page")
+        .forEach(page => {
+            page.classList.remove("active");
+        });
+
+    const page =
+        document.getElementById(pageId);
+
+    if (page) {
+        page.classList.add("active");
+    }
+
+    document.querySelectorAll(".nav-item")
+        .forEach(item => {
+            item.classList.remove("active");
+        });
+
+    if (element) {
+        element.classList.add("active");
+    }
+
+    if (pageId === "graphs") {
+        setTimeout(drawGraph, 100);
+    }
+
+    if (pageId === "bookmarks") {
+        renderBookmarks();
+    }
+
+    updateDashboard();
+
+    document.getElementById("sidebar")
+        .classList.remove("open");
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+
+}
+
+
+/* =========================================================
+   MOBILE SIDEBAR
+========================================================= */
+
+function toggleSidebar() {
+
+    document
+        .getElementById("sidebar")
+        .classList.toggle("open");
+
+}
+
+
+/* =========================================================
+   DARK MODE
+========================================================= */
+
+function toggleDarkMode() {
+
+    document.body.classList.toggle("dark");
+
+    const isDark =
+        document.body.classList.contains("dark");
+
+    localStorage.setItem(
+        "mathGuideDark",
+        isDark
+    );
+
+    const toggle =
+        document.getElementById("darkToggle");
+
+    if (toggle) {
+        toggle.checked = isDark;
+    }
+
+    if (
+        document
+            .getElementById("graphs")
+            .classList.contains("active")
+    ) {
+        drawGraph();
+    }
+
+}
+
+
+/* Load theme */
+
+if (localStorage.getItem("mathGuideDark") === "true") {
+
+    document.body.classList.add("dark");
+
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+function showToast(message) {
+
+    const toast =
+        document.getElementById("toast");
+
+    toast.textContent = message;
+
+    toast.style.display = "block";
+
+    clearTimeout(window.toastTimer);
+
+    window.toastTimer =
+        setTimeout(() => {
+
+            toast.style.display = "none";
+
+        }, 2500);
+
+}
+
+
+/* =========================================================
+   XP SYSTEM
+========================================================= */
+
+function addXP(amount) {
+
+    appData.xp += amount;
+
+    saveData();
+
+    showToast("+" + amount + " XP earned! 🎉");
+
+}
+
+
+function getLevel() {
+
+    return Math.floor(appData.xp / 100) + 1;
+
+}
+
+
+function getLevelName(level) {
+
+    if (level >= 10) return "Mathematics Master";
+    if (level >= 7) return "Advanced Scholar";
+    if (level >= 5) return "Problem Solver";
+    if (level >= 3) return "Mathematics Learner";
+
+    return "Beginner";
+
+}
+
+
+/* =========================================================
+   DASHBOARD UPDATE
+========================================================= */
+
+function updateDashboard() {
+
+    const level =
+        getLevel();
+
+    const currentXP =
+        appData.xp % 100;
+
+    const accuracy =
+        appData.attempts === 0
+            ? 0
+            : Math.round(
+                appData.correct /
+                appData.attempts *
+                100
+            );
+
+    document.getElementById("xpStat")
+        .textContent = appData.xp;
+
+    document.getElementById("accuracyStat")
+        .textContent = accuracy + "%";
+
+    document.getElementById("streakStat")
+        .textContent = appData.streak;
+
+    document.getElementById("levelStat")
+        .textContent = level;
+
+    document.getElementById("levelName")
+        .textContent =
+        getLevelName(level);
+
+    document.getElementById("levelCircle")
+        .textContent = level;
+
+    document.getElementById("levelBadge")
+        .textContent =
+        "Level " + level;
+
+    document.getElementById("levelTitle")
+        .textContent =
+        getLevelName(level);
+
+    document.getElementById("xpProgressText")
+        .textContent =
+        currentXP + " / 100 XP";
+
+    document.getElementById("xpProgress")
+        .style.width =
+        currentXP + "%";
+
+
+    document.getElementById("progressXP")
+        .textContent =
+        appData.xp;
+
+    document.getElementById("progressQuestions")
+        .textContent =
+        appData.attempts;
+
+    document.getElementById("progressAccuracy")
+        .textContent =
+        accuracy + "%";
+
+    document.getElementById("correctCount")
+        .textContent =
+        appData.correct;
+
+    document.getElementById("attemptCount")
+        .textContent =
+        appData.attempts;
+
+    const correctPercentage =
+        appData.attempts === 0
+            ? 0
+            : Math.round(
+                appData.correct /
+                appData.attempts *
+                100
+            );
+
+    document.getElementById("correctBar")
+        .style.width =
+        correctPercentage + "%";
+
+}
+
+
+/* =========================================================
+   GLOBAL SEARCH
+========================================================= */
+
+function globalSearch() {
+
+    const query =
+        document.getElementById("globalSearch")
+            .value
+            .toLowerCase()
+            .trim();
+
+    if (!query) return;
+
+    showPage("topics");
+
+    document
+        .querySelectorAll(".topic-card")
+        .forEach(card => {
+
+            const text =
+                card.dataset.search
+                .toLowerCase();
+
+            card.style.display =
+                text.includes(query)
+                    ? "block"
+                    : "none";
+
+        });
+
+}
+
+
+/* =========================================================
+   BOOKMARKS
+========================================================= */
+
+function toggleBookmark(button) {
+
+    const topic =
+        button.dataset.topic;
+
+    const index =
+        appData.bookmarks.indexOf(topic);
+
+    if (index === -1) {
+
+        appData.bookmarks.push(topic);
+
+        button.textContent = "★";
+        button.classList.add("saved");
+
+        showToast(topic + " bookmarked ⭐");
+
+    } else {
+
+        appData.bookmarks.splice(index, 1);
+
+        button.textContent = "☆";
+        button.classList.remove("saved");
+
+        showToast(topic + " removed");
+
+    }
+
+    saveData();
+
+    renderBookmarks();
+
+}
+
+
+function renderBookmarks() {
+
+    const box =
+        document.getElementById("bookmarkList");
+
+    if (!appData.bookmarks.length) {
+
+        box.innerHTML =
+            `<p class="muted">
+                No bookmarks yet.
+                Go to Topics and save topics you want to study.
+            </p>`;
+
+        return;
+    }
+
+    box.innerHTML =
+        appData.bookmarks
+            .map(topic => `
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:center;
+                    padding:14px 0;
+                    border-bottom:1px solid var(--border);
+                ">
+                    <strong>⭐ ${topic}</strong>
+
+                    <button
+                        class="btn small"
+                        onclick="openTopicLesson('${topic}')">
+                        Study
+                    </button>
+                </div>
+            `)
+            .join("");
+
+}
+
+
+/* =========================================================
+   LESSON SYSTEM
+========================================================= */
+
+const lessons = [
+
+    {
+        title: "What is a Derivative?",
+        text:
+        "A derivative measures how a function changes with respect to its input. Geometrically, it represents the slope of the tangent line.",
+        formula:
+        "f'(x) = lim h→0 [f(x+h) − f(x)] / h",
+        example:
+        "<strong>Example:</strong><br>If f(x) = x², then f'(x) = 2x."
+    },
+
+    {
+        title: "Power Rule",
+        text:
+        "The power rule is one of the most useful differentiation rules. Multiply by the exponent and reduce the exponent by one.",
+        formula:
+        "d/dx (xⁿ) = n xⁿ⁻¹",
+        example:
+        "<strong>Example:</strong><br>d/dx(x⁵) = 5x⁴."
+    },
+
+    {
+        title: "Constant Rule",
+        text:
+        "The derivative of a constant is zero because a constant does not change as x changes.",
+        formula:
+        "d/dx(c) = 0",
+        example:
+        "<strong>Example:</strong><br>d/dx(25) = 0."
+    },
+
+    {
+        title: "Sum Rule",
+        text:
+        "The derivative of a sum is the sum of the derivatives of each term.",
+        formula:
+        "(f + g)' = f' + g'",
+        example:
+        "<strong>Example:</strong><br>d/dx(x² + x) = 2x + 1."
+    },
+
+    {
+        title: "Product Rule",
+        text:
+        "When two functions are multiplied, use the product rule to differentiate the expression.",
+        formula:
+        "(fg)' = f'g + fg'",
+        example:
+        "<strong>Example:</strong><br>If y = x² sin(x), then y' = 2x sin(x) + x² cos(x)."
+    }
+
+];
+
+let currentLesson =
+    appData.lesson || 0;
+
+
+function loadLesson() {
+
+    const lesson =
+        lessons[currentLesson];
+
+    document.getElementById("lessonNumber")
+        .textContent =
+        "Lesson " + (currentLesson + 1);
+
+    document.getElementById("lessonTitle")
+        .textContent =
+        lesson.title;
+
+    document.getElementById("lessonText")
+        .textContent =
+        lesson.text;
+
+    document.getElementById("lessonFormula")
+        .textContent =
+        lesson.formula;
+
+    document.getElementById("lessonExample")
+        .innerHTML =
+        lesson.example;
+
+    document.getElementById("lessonCounter")
+        .textContent =
+        `${currentLesson + 1} / ${lessons.length}`;
+
+}
+
+
+function nextLesson() {
+
+    if (currentLesson < lessons.length - 1) {
+
+        currentLesson++;
+
+        appData.lesson =
+            currentLesson;
+
+        addXP(5);
+
+        loadLesson();
+
+        saveData();
+
+    } else {
+
+        showToast(
+            "You completed all lessons! 🏆"
+        );
+
+    }
+
+}
+
+
+function previousLesson() {
+
+    if (currentLesson > 0) {
+
+        currentLesson--;
+
+        appData.lesson =
+            currentLesson;
+
+        loadLesson();
+
+        saveData();
+
+    }
+
+}
+
+
+function openTopicLesson(topic) {
+
+    showPage("lessons");
+
+    if (topic === "Calculus") {
+
+        currentLesson = 0;
+
+    } else {
+
+        currentLesson = 0;
+
+        showToast(
+            topic +
+            " lessons are being expanded."
+        );
+
+    }
+
+    loadLesson();
+
+}
+
+
+/* =========================================================
+   PRACTICE QUESTION BANK
+========================================================= */
+
+const questionBank = [
+
+    {
+        topic: "Algebra",
+        question: "Solve: 2x + 5 = 15",
+        options: ["x = 3", "x = 5", "x = 10", "x = 15"],
+        answer: 1,
+        hint: "Subtract 5 from both sides first.",
+        explanation: "2x = 10, therefore x = 5."
+    },
+
+    {
+        topic: "Algebra",
+        question: "What is the value of 3² + 4²?",
+        options: ["12", "20", "25", "49"],
+        answer: 2,
+        hint: "Calculate each square first.",
+        explanation: "3² = 9 and 4² = 16. Therefore 9 + 16 = 25."
+    },
+
+    {
+        topic: "Calculus",
+        question: "What is the derivative of x³?",
+        options: ["x²", "2x", "3x²", "3x"],
+        answer: 2,
+        hint: "Use the power rule.",
+        explanation: "d/dx(x³) = 3x²."
+    },
+
+    {
+        topic: "Calculus",
+        question: "What is the derivative of 7x?",
+        options: ["7", "x", "7x²", "0"],
+        answer: 0,
+        hint: "The derivative of ax is a.",
+        explanation: "d/dx(7x) = 7."
+    },
+
+    {
+        topic: "Geometry",
+        question: "What is the area of a circle with radius 2?",
+        options: ["2π", "4π", "6π", "8π"],
+        answer: 1,
+        hint: "Use A = πr².",
+        explanation: "A = π(2²) = 4π."
+    },
+
+    {
+        topic: "Statistics",
+        question: "What is the mean of 2, 4 and 6?",
+        options: ["2", "3", "4", "6"],
+        answer: 2,
+        hint: "Add the values and divide by the number of values.",
+        explanation: "(2 + 4 + 6) / 3 = 4."
+    },
+
+    {
+        topic: "Probability",
+        question: "What is the probability of getting heads from a fair coin?",
+        options: ["0", "1/4", "1/2", "1"],
+        answer: 2,
+        hint: "There are two equally likely outcomes.",
+        explanation: "P(heads) = 1/2."
+    },
+
+    {
+        topic: "Linear Algebra",
+        question: "What is the determinant of [[1,2],[3,4]]?",
+        options: ["-2", "2", "4", "10"],
+        answer: 0,
+        hint: "For [[a,b],[c,d]], determinant = ad − bc.",
+        explanation: "1(4) − 2(3) = 4 − 6 = -2."
+    }
+
+];
+
+
+let practiceQuestions = [...questionBank];
+let currentPractice = 0;
+let practiceAnswered = false;
+
+
+function loadPracticeQuestion() {
+
+    const question =
+        practiceQuestions[currentPractice];
+
+    document.getElementById("practiceQuestion")
+        .textContent =
+        question.question;
+
+    document.getElementById("questionCounter")
+        .textContent =
+        `Question ${currentPractice + 1} / ${practiceQuestions.length}`;
+
+    document.getElementById("quizProgress")
+        .style.width =
+        (
+            currentPractice /
+            practiceQuestions.length *
+            100
+        ) + "%";
+
+    const options =
+        document.getElementById("practiceOptions");
+
+    options.innerHTML = "";
+
+    question.options.forEach(
+        (option, index) => {
+
+            const div =
+                document.createElement("div");
+
+            div.className = "option";
+
+            div.textContent = option;
+
+            div.onclick = () =>
+                answerPractice(index, div);
+
+            options.appendChild(div);
+
+        }
+    );
+
+    document.getElementById("hintArea")
+        .innerHTML = "";
+
+    practiceAnswered = false;
+
+}
+
+
+function answerPractice(index, element) {
+
+    if (practiceAnswered) return;
+
+    practiceAnswered = true;
+
+    const question =
+        practiceQuestions[currentPractice];
+
+    appData.attempts++;
+
+    if (index === question.answer) {
+
+        appData.correct++;
+
+        element.classList.add("correct");
+
+        addXP(10);
+
+        showToast("Correct! +10 XP 🎉");
+
+    } else {
+
+        element.classList.add("wrong");
+
+        document
+            .querySelectorAll("#practiceOptions .option")
+            [question.answer]
+            .classList.add("correct");
+
+        showToast("Not quite. Review the explanation.");
+
+    }
+
+    document.getElementById("hintArea")
+        .innerHTML = `
+            <div class="result">
+                <strong>Explanation:</strong><br>
+                ${question.explanation}
+            </div>
+        `;
+
+    document.getElementById("practiceScore")
+        .textContent =
+        "Score: " +
+        appData.correct;
+
+    saveData();
+
+}
+
+
+function showHint() {
+
+    const question =
+        practiceQuestions[currentPractice];
+
+    document.getElementById("hintArea")
+        .innerHTML = `
+            <div class="hint-box">
+                💡 <strong>Hint:</strong>
+                ${question.hint}
+            </div>
+        `;
+
+}
+
+
+function nextPracticeQuestion() {
+
+    currentPractice++;
+
+    if (
+        currentPractice >=
+        practiceQuestions.length
+    ) {
+
+        currentPractice = 0;
+
+        showToast(
+            "Practice set completed! 🏆"
+        );
+
+    }
+
+    loadPracticeQuestion();
+
+}
+
+
+function newPracticeQuestion() {
+
+    practiceQuestions =
+        [...questionBank]
+        .sort(() => Math.random() - .5);
+
+    currentPractice = 0;
+
+    loadPracticeQuestion();
+
+    showToast("New practice set generated!");
+
+}
+
+
+function practiceTopic(topic) {
+
+    const filtered =
+        questionBank.filter(
+            q => q.topic === topic
+        );
+
+    if (filtered.length) {
+
+        practiceQuestions = filtered;
+
+    } else {
+
+        practiceQuestions =
+            [...questionBank];
+
+    }
+
+    currentPractice = 0;
+
+    loadPracticeQuestion();
+
+    showPage("practice");
+
+}
+
+
+/* =========================================================
+   DAILY CHALLENGE
+========================================================= */
+
+const challengeOptions = [
+
+    "3x² + 4x − 5",
+    "x² + 2x − 5",
+    "3x² + 2x − 5",
+    "3x³ + 4x² − 5x"
+
+];
+
+
+function loadChallenge() {
+
+    const box =
+        document.getElementById(
+            "challengeOptions"
+        );
+
+    box.innerHTML = "";
+
+    challengeOptions.forEach(
+        (option, index) => {
+
+            box.innerHTML += `
+                <div
+                    class="option"
+                    data-challenge="${index}"
+                    onclick="selectChallenge(this, ${index})">
+                    ${option}
+                </div>
+            `;
+
+        }
+    );
+
+}
+
+
+let selectedChallenge = null;
+
+
+function selectChallenge(element, index) {
+
+    document
+        .querySelectorAll(
+            "[data-challenge]"
+        )
+        .forEach(
+            e => e.style.borderColor =
+                "var(--border)"
+        );
+
+    element.style.borderColor =
+        "var(--primary)";
+
+    selectedChallenge = index;
+
+}
+
+
+function submitChallenge() {
+
+    if (selectedChallenge === null) {
+
+        showToast("Please select an answer.");
+
+        return;
+
+    }
+
+    const result =
+        document.getElementById(
+            "challengeResult"
+        );
+
+    if (selectedChallenge === 0) {
+
+        result.innerHTML = `
+            <div class="result">
+                🎉 <strong>Excellent!</strong><br>
+                d/dx(x³ + 2x² − 5x)
+                = 3x² + 4x − 5
+            </div>
+        `;
+
+        if (!appData.challengeCompleted) {
+
+            appData.challengeCompleted = true;
+
+            addXP(25);
+
+            saveData();
+
+        }
+
+    } else {
+
+        result.innerHTML = `
+            <div class="result">
+                ❌ Not quite.<br>
+                Use the power rule:
+                d/dx(xⁿ) = nxⁿ⁻¹.
+            </div>
+        `;
+
+    }
+
+}
+
+
+/* =========================================================
+   CALCULATOR
+========================================================= */
+
+function calcAdd(value) {
+
+    document.getElementById("calcDisplay")
+        .value += value;
+
+}
+
+
+function calcClear() {
+
+    document.getElementById("calcDisplay")
+        .value = "";
+
+}
+
+
+function calcDelete() {
+
+    const display =
+        document.getElementById("calcDisplay");
+
+    display.value =
+        display.value.slice(0, -1);
+
+}
+
+
+function calcCalculate() {
+
+    const display =
+        document.getElementById("calcDisplay");
+
+    const expression =
+        display.value;
+
+    try {
+
+        if (!expression) return;
+
+        const result =
+            Function(
+                '"use strict"; return (' +
+                expression +
+                ')'
+            )();
+
+        document.getElementById("calcHistory")
+            .textContent =
+            expression + " = " + result;
+
+        display.value = result;
+
+        addCalculationHistory(
+            expression,
+            result
+        );
+
+    } catch {
+
+        display.value = "Error";
+
+    }
+
+}
+
+
+function addCalculationHistory(
+    expression,
+    result
+) {
+
+    let history =
+        JSON.parse(
+            localStorage.getItem(
+                "mathGuideCalcHistory"
+            )
+        ) || [];
+
+    history.unshift(
+        expression + " = " + result
+    );
+
+    history =
+        history.slice(0, 10);
+
+    localStorage.setItem(
+        "mathGuideCalcHistory",
+        JSON.stringify(history)
+    );
+
+    renderCalculationHistory();
+
+}
+
+
+function renderCalculationHistory() {
+
+    const box =
+        document.getElementById(
+            "calculationHistory"
+        );
+
+    const history =
+        JSON.parse(
+            localStorage.getItem(
+                "mathGuideCalcHistory"
+            )
+        ) || [];
+
+    if (!history.length) {
+
+        box.textContent =
+            "No calculations yet.";
+
+        return;
+
+    }
+
+    box.innerHTML =
+        history
+            .map(
+                item => `
+                    <div style="
+                        padding:10px 0;
+                        border-bottom:1px solid var(--border);
+                    ">
+                        ${item}
+                    </div>
+                `
+            )
+            .join("");
+
+}
+
+
+/* =========================================================
+   EQUATION SOLVER
+========================================================= */
+
+function solveEquation() {
+
+    const input =
+        document.getElementById(
+            "equationInput"
+        )
+        .value
+        .replace(/\s/g, "")
+        .toLowerCase();
+
+    const box =
+        document.getElementById(
+            "solutionBox"
+        );
+
+    if (!input.includes("=")) {
+
+        box.innerHTML =
+            "Please enter an equation such as <strong>2x + 5 = 15</strong>.";
+
+        return;
+
+    }
+
+    const parts =
+        input.split("=");
+
+    const left =
+        parts[0];
+
+    const right =
+        parseFloat(parts[1]);
+
+    const match =
+        left.match(
+            /^([+-]?\d*\.?\d*)x([+-]\d*\.?\d*)?$/
+        );
+
+    if (!match || isNaN(right)) {
+
+        box.innerHTML =
+            "This version supports equations such as 2x + 5 = 15.";
+
+        return;
+
+    }
+
+    let coefficient =
+        match[1];
+
+    let constant =
+        match[2] || "0";
+
+    if (
+        coefficient === "" ||
+        coefficient === "+"
+    ) {
+
+        coefficient = 1;
+
+    } else if (
+        coefficient === "-"
+    ) {
+
+        coefficient = -1;
+
+    } else {
+
+        coefficient =
+            parseFloat(coefficient);
+
+    }
+
+    constant =
+        parseFloat(constant);
+
+    const remaining =
+        right - constant;
+
+    const answer =
+        remaining / coefficient;
+
+    box.innerHTML = `
+
+        <div>
+            <strong>Step 1:</strong>
+            Start with the equation.
+            <br>
+            ${coefficient}x + ${constant}
+            = ${right}
+
+            <br><br>
+
+            <strong>Step 2:</strong>
+            Subtract ${constant} from both sides.
+            <br>
+            ${coefficient}x
+            = ${remaining}
+
+            <br><br>
+
+            <strong>Step 3:</strong>
+            Divide both sides by ${coefficient}.
+            <br>
+
+            <strong>Answer:</strong>
+            <span style="font-size:22px">
+                x = ${Number(answer.toFixed(5))}
+            </span>
+        </div>
+
+    `;
+
+    addXP(5);
+
+}
+
+
+/* =========================================================
+   GRAPH ENGINE
+========================================================= */
+
+function drawGraph() {
+
+    const canvas =
+        document.getElementById(
+            "graphCanvas"
+        );
+
+    if (!canvas) return;
+
+    const ctx =
+        canvas.getContext("2d");
+
+    const width =
+        canvas.width;
+
+    const height =
+        canvas.height;
+
+    const scaleInput =
+        parseFloat(
+            document.getElementById(
+                "graphScale"
+            ).value
+        );
+
+    const scale =
+        isNaN(scaleInput)
+            ? 35
+            : scaleInput;
+
+    const centerX =
+        width / 2;
+
+    const centerY =
+        height / 2;
+
+    ctx.clearRect(
+        0,
+        0,
+        width,
+        height
+    );
+
+
+    /* Grid */
+
+    ctx.strokeStyle =
+        document.body.classList.contains("dark")
+            ? "#293548"
+            : "#e5e7eb";
+
+    ctx.lineWidth = 1;
+
+    for (
+        let x = centerX % scale;
+        x < width;
+        x += scale
+    ) {
+
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, height);
+        ctx.stroke();
+
+    }
+
+    for (
+        let y = centerY % scale;
+        y < height;
+        y += scale
+    ) {
+
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(width, y);
+        ctx.stroke();
+
+    }
+
+
+    /* Axes */
+
+    ctx.strokeStyle =
+        document.body.classList.contains("dark")
+            ? "#94a3b8"
+            : "#64748b";
+
+    ctx.lineWidth = 2;
+
+    ctx.beginPath();
+
+    ctx.moveTo(centerX, 0);
+    ctx.lineTo(centerX, height);
+
+    ctx.moveTo(0, centerY);
+    ctx.lineTo(width, centerY);
+
+    ctx.stroke();
+
+
+    /* Function */
+
+    const expression =
+        document.getElementById(
+            "functionInput"
+        ).value;
+
+    let converted =
+        expression
+        .replace(/\^/g, "**")
+        .replace(/\bsin\b/g, "Math.sin")
+        .replace(/\bcos\b/g, "Math.cos")
+        .replace(/\btan\b/g, "Math.tan")
+        .replace(/\bsqrt\b/g, "Math.sqrt")
+        .replace(/\babs\b/g, "Math.abs")
+        .replace(/\bexp\b/g, "Math.exp")
+        .replace(/\blog\b/g, "Math.log");
+
+
+    ctx.beginPath();
+
+    let started = false;
+
+    for (
+        let px = 0;
+        px < width;
+        px++
+    ) {
+
+        const x =
+            (px - centerX) / scale;
+
+        let y;
+
+        try {
+
+            y =
+                Function(
+                    "x",
+                    "return " + converted
+                )(x);
+
+        } catch {
+
+            return;
+
+        }
+
+        if (
+            typeof y !== "number" ||
+            !isFinite(y)
+        ) {
+
+            started = false;
+            continue;
+
+        }
+
+        const py =
+            centerY - y * scale;
+
+        if (
+            py < -10000 ||
+            py > 10000
+        ) {
+
+            started = false;
+            continue;
+
+        }
+
+        if (!started) {
+
+            ctx.moveTo(px, py);
+
+            started = true;
+
+        } else {
+
+            ctx.lineTo(px, py);
+
+        }
+
+    }
+
+    ctx.strokeStyle =
+        "#6366f1";
+
+    ctx.lineWidth = 3;
+
+    ctx.stroke();
+
+}
+
+
+/* =========================================================
+   MATH TOOLS
+========================================================= */
+
+function openTool(id, button) {
+
+    document
+        .querySelectorAll(".tool-panel")
+        .forEach(
+            panel =>
+                panel.classList.remove("active")
+        );
+
+    document
+        .querySelectorAll(".tool-tab")
+        .forEach(
+            tab =>
+                tab.classList.remove("active")
+        );
+
+    document
+        .getElementById(id)
+        .classList.add("active");
+
+    button.classList.add("active");
+
+}
+
+
+function calculatePercentage() {
+
+    const a =
+        parseFloat(
+            document.getElementById(
+                "percentA"
+            ).value
+        );
+
+    const b =
+        parseFloat(
+            document.getElementById(
+                "percentB"
+            ).value
+        );
+
+    if (isNaN(a) || isNaN(b) || b === 0) {
+
+        document.getElementById(
+            "percentageResult"
+        ).textContent =
+            "Please enter valid values.";
+
+        return;
+
+    }
+
+    const result =
+        a / b * 100;
+
+    document.getElementById(
+        "percentageResult"
+    ).innerHTML =
+
+        `<strong>${a}</strong> is
+        <strong>${result.toFixed(2)}%</strong>
+        of <strong>${b}</strong>.`;
+
+}
+
+
+function solveQuadratic() {
+
+    const a =
+        parseFloat(
+            document.getElementById("qa").value
+        );
+
+    const b =
+        parseFloat(
+            document.getElementById("qb").value
+        );
+
+    const c =
+        parseFloat(
+            document.getElementById("qc").value
+        );
+
+    const box =
+        document.getElementById(
+            "quadraticResult"
+        );
+
+    if (
+        isNaN(a) ||
+        isNaN(b) ||
+        isNaN(c) ||
+        a === 0
+    ) {
+
+        box.textContent =
+            "Please enter valid a, b and c values. a cannot be zero.";
+
+        return;
+
+    }
+
+    const discriminant =
+        b*b - 4*a*c;
+
+    if (discriminant > 0) {
+
+        const x1 =
+            (-b + Math.sqrt(discriminant))
+            / (2*a);
+
+        const x2 =
+            (-b - Math.sqrt(discriminant))
+            / (2*a);
+
+        box.innerHTML = `
+            Discriminant = ${discriminant}
+            <br>
+            x₁ = ${x1.toFixed(4)}
+            <br>
+            x₂ = ${x2.toFixed(4)}
+        `;
+
+    } else if (discriminant === 0) {
+
+        const x =
+            -b / (2*a);
+
+        box.innerHTML =
+            `One repeated root:
+             <strong>x = ${x.toFixed(4)}</strong>`;
+
+    } else {
+
+        const real =
+            -b / (2*a);
+
+        const imaginary =
+            Math.sqrt(-discriminant)
+            / (2*a);
+
+        box.innerHTML = `
+            Complex roots:
+            <br>
+            x₁ = ${real.toFixed(4)}
+            + ${imaginary.toFixed(4)}i
+            <br>
+            x₂ = ${real.toFixed(4)}
+            − ${imaginary.toFixed(4)}i
+        `;
+
+    }
+
+}
+
+
+function calculateStatistics() {
+
+    const input =
+        document.getElementById(
+            "statisticsInput"
+        ).value;
+
+    const numbers =
+        input
+            .split(",")
+            .map(Number)
+            .filter(n => !isNaN(n));
+
+    const box =
+        document.getElementById(
+            "statisticsResult"
+        );
+
+    if (!numbers.length) {
+
+        box.textContent =
+            "Enter numbers separated by commas.";
+
+        return;
+
+    }
+
+    const sorted =
+        [...numbers].sort(
+            (a,b) => a-b
+        );
+
+    const sum =
+        numbers.reduce(
+            (a,b) => a+b,
+            0
+        );
+
+    const mean =
+        sum / numbers.length;
+
+    const middle =
+        Math.floor(
+            sorted.length / 2
+        );
+
+    const median =
+        sorted.length % 2
+            ? sorted[middle]
+            : (
+                sorted[middle-1] +
+                sorted[middle]
+            ) / 2;
+
+    const frequency = {};
+
+    numbers.forEach(
+        n =>
+            frequency[n] =
+            (frequency[n] || 0) + 1
+    );
+
+    let mode = "No unique mode";
+
+    let maxFrequency = 1;
+
+    Object.keys(frequency)
+        .forEach(n => {
+
+            if (
+                frequency[n] >
+                maxFrequency
+            ) {
+
+                maxFrequency =
+                    frequency[n];
+
+                mode = n;
+
+            }
+
+        });
+
+    const variance =
+        numbers.reduce(
+            (sum, n) =>
+                sum + Math.pow(
+                    n - mean,
+                    2
+                ),
+            0
+        ) / numbers.length;
+
+    const standardDeviation =
+        Math.sqrt(variance);
+
+    box.innerHTML = `
+        <strong>Count:</strong>
+        ${numbers.length}
+        <br>
+        <strong>Sum:</strong>
+        ${sum}
+        <br>
+        <strong>Mean:</strong>
+        ${mean.toFixed(3)}
+        <br>
+        <strong>Median:</strong>
+        ${median}
+        <br>
+        <strong>Mode:</strong>
+        ${mode}
+        <br>
+        <strong>Variance:</strong>
+        ${variance.toFixed(3)}
+        <br>
+        <strong>Standard Deviation:</strong>
+        ${standardDeviation.toFixed(3)}
+    `;
+
+}
+
+
+function calculateCircle() {
+
+    const radius =
+        parseFloat(
+            document.getElementById(
+                "radiusInput"
+            ).value
+        );
+
+    const box =
+        document.getElementById(
+            "circleResult"
+        );
+
+    if (
+        isNaN(radius) ||
+        radius < 0
+    ) {
+
+        box.textContent =
+            "Enter a valid radius.";
+
+        return;
+
+    }
+
+    const area =
+        Math.PI * radius * radius;
+
+    const circumference =
+        2 * Math.PI * radius;
+
+    box.innerHTML = `
+        <strong>Area:</strong>
+        ${area.toFixed(3)}
+        <br>
+        <strong>Circumference:</strong>
+        ${circumference.toFixed(3)}
+    `;
+
+}
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+function resetProgress() {
+
+    const confirmReset =
+        confirm(
+            "Are you sure you want to reset your MathGuide progress?"
+        );
+
+    if (!confirmReset) return;
+
+    appData = {
+
+        xp: 0,
+        correct: 0,
+        attempts: 0,
+        streak: 1,
+        bookmarks: [],
+        challengeCompleted: false,
+        lesson: 0,
+        lastDate: new Date().toDateString()
+
+    };
+
+    currentLesson = 0;
+
+    saveData();
+
+    loadLesson();
+
+    renderBookmarks();
+
+    showToast(
+        "Progress has been reset."
+    );
+
+}
+
+
+/* =========================================================
+   INITIALIZATION
+========================================================= */
+
+function initialize() {
+
+    updateDashboard();
+
+    loadLesson();
+
+    loadPracticeQuestion();
+
+    loadChallenge();
+
+    renderBookmarks();
+
+    renderCalculationHistory();
+
+    const darkToggle =
+        document.getElementById(
+            "darkToggle"
+        );
+
+    darkToggle.checked =
+        document.body.classList.contains(
+            "dark"
+        );
+
+    setTimeout(
+        drawGraph,
+        200
+    );
+
+}
+
+
+initialize();
+
+</script>
+
+</body>
+</html>
